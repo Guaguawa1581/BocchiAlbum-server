@@ -47,7 +47,7 @@ const sendEmail = async (userEmail, resetToken) => {
     },
     to: userEmail,
     subject: "Reset PASSWORD of BocchiAlbum",
-    text: `To reset your Bocchi Album! password, please click this link: \n\n ${process.env.FRONTEND_WEB}/${resetToken}  \n\n Verification codes will expire after 24 hours.`
+    text: `To reset your Bocchi Album! password, please click this link: \n\n ${process.env.FRONTEND_WEB}/${resetToken}  \n\n Verification codes will expire after 2 hours.`
   };
 
   const result = await transport.sendMail(mailOptions);

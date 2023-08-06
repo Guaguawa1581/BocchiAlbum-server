@@ -187,7 +187,7 @@ const forgotPw = async (req, res) => {
 
     const matchUserId = findResult.user.user_id;
     const resetToken = uuidv4();
-    const tokenTime = Date.now() + 1000 * 60 * 60;
+    const tokenTime = Date.now() + 1000 * 60 * 60 * 2;
 
     const resetTokenObj = {
       reset_token: resetToken,
