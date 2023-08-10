@@ -8,8 +8,9 @@ const multerSetting = multer({
   fileFilter: function (req, file, cb) {
     if (
       file.mimetype !== "image/jpeg" &&
-      file.mimetype !== "image/png" &&
       file.mimetype !== "image/jpg" &&
+      file.mimetype !== "image/png" &&
+      file.mimetype !== "image/webp" &&
       file.mimetype !== "image/gif"
     ) {
       cb(new Error("上傳的檔案類型不符合規定"));

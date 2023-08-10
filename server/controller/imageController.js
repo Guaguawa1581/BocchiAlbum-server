@@ -20,7 +20,6 @@ const postImg = (req, res) => {
         imgUrl: imgUrl
       });
     } catch (err) {
-      console.error(err);
       return handleError(res, "文件上傳失敗", 500);
     }
   });
