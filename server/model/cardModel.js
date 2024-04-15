@@ -1,4 +1,5 @@
-const dbConnect = require("../middleware/dbConnect");
+// const dbConnect = require("../middleware/dbConnect");
+const dbConnect = require("../middleware/localDb");
 const backMeg = (err, meg) => {
   return { error: err, message: meg };
 };
@@ -6,7 +7,7 @@ const backMeg = (err, meg) => {
 const postNew = async (data) => {
   try {
     const insertSql = "INSERT INTO cards SET ?";
-    const result = await dbConnect(insertSql, [data]);
+    const result = await dbConnect.executeSQL(insertSql, [data]);
 
     if (result.affectedRows >= 1) {
       return backMeg(null, `資料新增 ${result.affectedRows}筆`);
@@ -43,7 +44,7 @@ const getData = async (isAll = false, userId, cardId, nowPage, perPage) => {
       }
     }
 
-    const result = await dbConnect(getSql, getParams);
+    const result = await dbConnect.executeSQL(getSql, getParams);
     if (result.length > 0) {
       return {
         message: "已取得資料",
@@ -61,7 +62,7 @@ const getData = async (isAll = false, userId, cardId, nowPage, perPage) => {
 const updataData = async (cardId, data) => {
   try {
     const putSql = "UPDATE cards SET ? WHERE card_id = ?";
-    const result = await dbConnect(putSql, [data, cardId]);
+    const result = await dbConnect.executeSQL(putSql, [data, cardId]);
 
     if (result.affectedRows >= 1) {
       return backMeg(null, `資料更新 ${result.affectedRows}筆`);
@@ -75,7 +76,7 @@ const updataData = async (cardId, data) => {
 const delData = async (cardId, data) => {
   try {
     const delSql = "DELETE FROM cards WHERE card_id = ?";
-    const result = await dbConnect(delSql, [cardId]);
+    const result = await dbConnect.executeSQL(delSql, [cardId]);
 
     if (result.affectedRows >= 1) {
       return backMeg(null, `資料刪除 ${result.affectedRows}筆`);

@@ -1,4 +1,5 @@
-const dbConnect = require("../middleware/dbConnect");
+// const dbConnect = require("../middleware/dbConnect");
+const dbConnect = require("../middleware/localDb");
 
 const backMeg = (err, meg) => {
   return { error: err, message: meg };
@@ -15,23 +16,23 @@ const findUser = async (email, resetToken = false) => {
       checkSql += "reset_token = ? ";
       checkParams.push(resetToken);
     }
-    const checkResult = await dbConnect(checkSql, checkParams);
+    const checkResult = await dbConnect.executeSQL(checkSql, checkParams);
 
-    if (checkResult.length > 0) {
-      return {
-        isExist: true,
-        user: checkResult[0],
-        message: "已搜尋到會員資料",
-        error: false
-      };
-    } else {
-      return {
-        isExist: false,
-        user: null,
-        message: `${email ? "email" : "Token"} 不存在`,
-        error: false
-      };
-    }
+    // if (checkResult.length > 0) {
+    //   return {
+    //     isExist: true,
+    //     user: checkResult[0],
+    //     message: "已搜尋到會員資料",
+    //     error: false
+    //   };
+    // } else {
+    //   return {
+    //     isExist: false,
+    //     user: null,
+    //     message: `${email ? "email" : "Token"} 不存在`,
+    //     error: false
+    //   };
+    // }
   } catch (error) {
     console.log(error);
     return {
@@ -44,8 +45,9 @@ const findUser = async (email, resetToken = false) => {
 };
 const registerUser = async (data) => {
   try {
-    const insertSql = "INSERT INTO users SET ?";
-    const result = await dbConnect(insertSql, [data]);
+    const { user_id, email, password, username, avatar, created_at } = data;
+    const insertSql = "INSERT INTO users (user_id, email, password, username, avatar, created_at) VALUES (?, ?, ?, ?, ?, ?)";
+    const result = await dbConnect.executeSQL(insertSql, [user_id, email, password, username, avatar, created_at]);
 
     if (result.affectedRows >= 1) {
       return backMeg(null, `會員資料新增 ${result.affectedRows}筆`);
@@ -63,7 +65,7 @@ const updateUser = async (userIdOrToken, data, isResetToken = false) => {
     isResetToken
       ? (updateSql += "reset_token = ?")
       : (updateSql += "user_id = ?");
-    const result = await dbConnect(updateSql, [data, userIdOrToken]);
+    const result = await dbConnect.executeSQL(updateSql, [data, userIdOrToken]);
 
     if (result.affectedRows >= 1) {
       return backMeg(null, `會員資料更新 ${result.affectedRows}筆`);
