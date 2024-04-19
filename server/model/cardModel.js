@@ -6,9 +6,9 @@ const backMeg = (err, meg) => {
 
 const postNew = async (data) => {
   try {
-    const insertSql = "INSERT INTO cards SET ?";
-    const result = await dbConnect.executeSQL(insertSql, [data]);
-
+    const { card_id, user_id, title, is_public, image_url, created_at, updated_at } = data;
+    let insertSql = "INSERT INTO cards (card_id, user_id, title, is_public, image_url, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?) ";
+    const result = await dbConnect.runSql(insertSql, [card_id, user_id, title, is_public, image_url, created_at, updated_at]);
     if (result.affectedRows >= 1) {
       return backMeg(null, `資料新增 ${result.affectedRows}筆`);
     } else {
@@ -44,7 +44,7 @@ const getData = async (isAll = false, userId, cardId, nowPage, perPage) => {
       }
     }
 
-    const result = await dbConnect.executeSQL(getSql, getParams);
+    const result = await dbConnect.selectSql(getSql, getParams);
     if (result.length > 0) {
       return {
         message: "已取得資料",
@@ -61,9 +61,17 @@ const getData = async (isAll = false, userId, cardId, nowPage, perPage) => {
 
 const updataData = async (cardId, data) => {
   try {
-    const putSql = "UPDATE cards SET ? WHERE card_id = ?";
-    const result = await dbConnect.executeSQL(putSql, [data, cardId]);
+    let putSql = "UPDATE cards SET ";
+    let params = [];
+    const keys = Object.keys(data);
+    keys.forEach((key, index) => {
+      putSql += `${key} = ?${index < (keys.length - 1) ? ', ' : ' '}`;
+      params.push(data[key]);
+    });
+    putSql += "WHERE card_id = ?";
+    params.push(cardId);
 
+    const result = await dbConnect.runSql(putSql, params);
     if (result.affectedRows >= 1) {
       return backMeg(null, `資料更新 ${result.affectedRows}筆`);
     } else {
@@ -73,10 +81,10 @@ const updataData = async (cardId, data) => {
     return backMeg("伺服器發生錯誤", error);
   }
 };
-const delData = async (cardId, data) => {
+const delData = async (cardId) => {
   try {
     const delSql = "DELETE FROM cards WHERE card_id = ?";
-    const result = await dbConnect.executeSQL(delSql, [cardId]);
+    const result = await dbConnect.runSql(delSql, [cardId]);
 
     if (result.affectedRows >= 1) {
       return backMeg(null, `資料刪除 ${result.affectedRows}筆`);

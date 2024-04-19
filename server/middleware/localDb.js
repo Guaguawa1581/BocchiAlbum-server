@@ -95,34 +95,53 @@ class SQLDatabase {
       });
     });
   }
-
-
-  executeSQL(cb) {
-    // this.db.run(sql, params, function (err, row) {
-    //   callback(this, err, row);
-    //   // if (err) {
-    //   //   console.log("eeeeeeeeee", err);
-    //   //   console.error('Error executing SQL:', err.message);
-    //   //   if (callback) callback(err, null);
-    //   // } else {
-    //   //   console.log('SQL executed successfully');
-    //   //   if (callback) callback(null, { id: this.lastID, changes: this.changes });
-    //   // }
-    // });
-
-    this.db.all("SELECT * FROM users", [], (err, row) => {
-      if (cb) cb({ err, row });
+  /** 用於sqlite的 select */
+  selectSql(sql, params) {
+    return new Promise((res, rej) => {
+      this.db.all(sql, params, (err, row) => {
+        if (err) {
+          return rej(err);
+        } else {
+          res(row);
+        }
+      });
     });
   }
+  /** 用於sqlite 的 insert, updata, delete */
+  runSql(sql, params) {
+    return new Promise((res, rej) => {
+      this.db.run(sql, params, function (err) {
+        if (err) {
+          return rej(err.code);
+        }
+        const chageNum = this.changes;
+        return res({ affectedRows: chageNum });
+      });
+    });
+  }
+  // deleteSql(cb) {
+  //   return new Promise((res, rej) => {
+  //     this.db.run("DELETE FROM users WHERE sid = ?", [1], function (err, row) {
+  //       if (err) {
+  //         return rej(err);
+  //       }
+  //       res({ affectedRows: this.change, now: this });
+  //     });
+  //   });
+  // }
 
   closeDatabase() {
-    this.db.close((err) => {
-      if (err) {
-        console.error('Error closing database:', err.message);
-      } else {
-        console.log('Database connection closed.');
-      }
+    return new Promise((res, rej) => {
+      this.db.close((err) => {
+        if (err) {
+          return rej(err);
+          console.error('Error closing database:', err.message);
+        } else {
+          res('close Db');
+        }
+      });
     });
+
   }
 
   static getInstance() {

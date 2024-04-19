@@ -28,19 +28,54 @@ app.use("/api/test", (req, res) => {
     token: token
   });
 });
-app.use("/api/testDb", (req, res) => {
-  localDb.executeSQL((e) => {
 
-    res.json(e);
-  });
-  // localDb.executeSQL("INSERT INTO users (user_id, email, password, username, avatar, created_at) VALUES (?, ?, ?, ?, ?, ?)", ['398439', 'lskjdlfk@gjlak.com', 'eeee', 'elkejel', 'lskdjfl', 231123], (e) => {
-  //   res.json(e);
-  // });
+app.use("/api/testDb", async (req, res) => {
+  try {
+    const result = await localDb.selectSql();
+    res.json(result);
 
+  } catch (err) {
+    res.json(err);
+  }
 
 });
-app.use("/api/deleteTestDb", (req, res) => {
-  localDb.closeDatabase();
+app.use("/api/testDb2", async (req, res) => {
+  try {
+    const result = await localDb.selectSqlUser();
+    res.json(result);
+
+  } catch (err) {
+    res.json(err);
+  }
+
+});
+app.use("/api/testExecute", async (req, res) => {
+  try {
+    const result = await localDb.executeSql();
+    res.json(result);
+
+  } catch (err) {
+    res.json(err);
+  }
+});
+app.use("/api/testDeleteUser", async (req, res) => {
+  try {
+    const result = await localDb.deleteSql();
+    res.json(result);
+
+  } catch (err) {
+    res.json(err);
+  }
+});
+
+app.use("/api/testClose", async (req, res) => {
+  try {
+    const result = await localDb.closeDatabase();
+    res.json(result);
+
+  } catch (err) {
+    res.json(err);
+  }
 });
 // 開始監聽
 // app.listen(8080, () => {

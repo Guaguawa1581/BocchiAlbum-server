@@ -32,7 +32,7 @@ const registerFn = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
     const filterAvatar = xss(avatar);
     // 生成使用者ID
-    const userId = Math.floor(1000000000 + Math.random() * 9000000000);
+    const userId = Math.floor(1000000000 + Math.random() * 9000000000).toString();
     const createdAt = Date.now();
 
     const userData = {
@@ -156,6 +156,7 @@ const updateProfile = async (req, res) => {
       };
     }
 
+    console.log("ujuu", userId, userData);
     const updateResult = await userModel.updateUser(userId, userData);
     if (updateResult.error) {
       return handleError(res, updateResult.error);
