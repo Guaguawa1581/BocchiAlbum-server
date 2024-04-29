@@ -1,7 +1,7 @@
-const cloudinary = require('cloudinary').v2;
-const axios = require('axios');
-const FormData = require('form-data');
-const sharp = require('sharp');
+const cloudinary = require("cloudinary").v2;
+const axios = require("axios");
+const FormData = require("form-data");
+const sharp = require("sharp");
 const cloudinaryConfig = cloudinary.config({
   cloud_name: process.env.CLOUDINARY_ClOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -9,16 +9,24 @@ const cloudinaryConfig = cloudinary.config({
   secure: true
 });
 
-const getSignature = (folderName = 'bocchi_imgs') => {
-  const timestamp = Math.round((new Date).getTime() / 1000);
+const getSignature = (folderName = "bocchi_imgs") => {
+  const timestamp = Math.round(new Date().getTime() / 1000);
   const apiSecret = cloudinary.config().api_secret;
   const uploadPreset = process.env.CLOUDINARY_UPLOAD_PRESET;
-  const signature = cloudinary.utils.api_sign_request({
-    timestamp: timestamp,
+  const signature = cloudinary.utils.api_sign_request(
+    {
+      timestamp: timestamp,
+      folder: folderName,
+      upload_preset: uploadPreset
+    },
+    apiSecret
+  );
+  return {
+    timestamp,
+    signature,
     folder: folderName,
     upload_preset: uploadPreset
-  }, apiSecret);
-  return { timestamp, signature, folder: folderName, upload_preset: uploadPreset };
+  };
 };
 
 /** 上傳到圖片到cloudinary
@@ -48,10 +56,9 @@ const postImg = async (file, folderName) => {
   fd.append("signature", signData.signature);
   fd.append("folder", folderName);
   try {
-    const res = await axios.post(url, fd,
-      {
-        header: { ...fd.getHeaders() }
-      });
+    const res = await axios.post(url, fd, {
+      header: { ...fd.getHeaders() }
+    });
     const imgKey = res.data.asset_id;
     const imgUrl = res.data.secure_url;
     return { ...res.data, imgKey, imgUrl };
@@ -59,8 +66,6 @@ const postImg = async (file, folderName) => {
     console.error(err);
   }
 };
-
-
 
 module.exports = {
   postImg

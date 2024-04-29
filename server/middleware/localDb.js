@@ -1,25 +1,28 @@
-const { defaultMaxListeners } = require('nodemailer/lib/xoauth2');
+const { defaultMaxListeners } = require("nodemailer/lib/xoauth2");
 
-const sqlite3 = require('sqlite3').verbose();
+const sqlite3 = require("sqlite3").verbose();
 
 class SQLDatabase {
-  constructor(dbPath = './database/mydatabase.db') {
+  constructor(dbPath = "./database/bocchiDb.db") {
     this.dbPath = dbPath;
     this.instance = null;
     this.db = null;
-
   }
 
   initDatabase(cb) {
-    this.db = new sqlite3.Database(this.dbPath, sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
-      if (err) {
-        console.error('Error opening database:', err.message);
-        if (cb) cb(err);
-      } else {
-        console.log('Connected to the SQLite database.');
-        this.enableForeignKeySupport(cb);
+    this.db = new sqlite3.Database(
+      this.dbPath,
+      sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE,
+      (err) => {
+        if (err) {
+          console.error("Error opening database:", err.message);
+          if (cb) cb(err);
+        } else {
+          console.log("Connected to the SQLite database.");
+          this.enableForeignKeySupport(cb);
+        }
       }
-    });
+    );
   }
 
   enableForeignKeySupport(cb) {
@@ -27,13 +30,12 @@ class SQLDatabase {
 
     this.db.run("PRAGMA foreign_keys = ON;", (err) => {
       if (err) {
-        console.error('Error enabling foreign key support:', err.message);
+        console.error("Error enabling foreign key support:", err.message);
         if (cb) cb(err);
         return;
       }
-      console.log('Foreign key support enabled.');
+      console.log("Foreign key support enabled.");
 
-      // 现在启用外键支持后，继续创建表
       this.createTable(cb);
     });
   }
@@ -75,22 +77,21 @@ class SQLDatabase {
     // 先建User
     this.db.run(sqlUsers, (err) => {
       if (err) {
-        console.error('Error creating users table:', err.message);
+        console.error("Error creating users table:", err.message);
         if (cb) cb(err);
         return;
       }
-      console.log('Users table is ready.');
+      console.log("Users table is ready.");
 
       // 後card
       this.db.run(sqlCards, (err) => {
         if (err) {
-          console.error('Error creating cards table:', err.message);
+          console.error("Error creating cards table:", err.message);
           if (cb) cb(err);
           return;
         }
-        console.log('Cards table is ready.');
+        console.log("Cards table is ready.");
 
-        // 如果都成功了，调用回调无错误
         if (cb) cb(null);
       });
     });
@@ -135,13 +136,12 @@ class SQLDatabase {
       this.db.close((err) => {
         if (err) {
           return rej(err);
-          console.error('Error closing database:', err.message);
+          console.error("Error closing database:", err.message);
         } else {
-          res('close Db');
+          res("close Db");
         }
       });
     });
-
   }
 
   static getInstance() {

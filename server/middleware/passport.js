@@ -16,11 +16,11 @@ passport.use(
       return done(null, false, { message: "Token 已經過期" });
     }
     // dbConnect(...)
-    console.log('JJJJJJJJJJJJJ', jwt_payload);
     try {
       const checkResult = await localDb.selectSql(
         "SELECT * FROM users WHERE user_id = ? AND email = ?",
-        [jwt_payload.userId, jwt_payload.email]);
+        [jwt_payload.userId, jwt_payload.email]
+      );
 
       if (checkResult.length > 0) {
         return done(null, checkResult);
@@ -30,7 +30,6 @@ passport.use(
     } catch (err) {
       return done(err, false);
     }
-
   })
 );
 

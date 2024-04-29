@@ -32,7 +32,9 @@ const registerFn = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
     const filterAvatar = xss(avatar);
     // 生成使用者ID
-    const userId = Math.floor(1000000000 + Math.random() * 9000000000).toString();
+    const userId = Math.floor(
+      1000000000 + Math.random() * 9000000000
+    ).toString();
     const createdAt = Date.now();
 
     const userData = {
@@ -199,18 +201,27 @@ const forgotPw = async (req, res) => {
     if (updateResult.error) {
       return handleError(res, updateResult.error);
     }
-
+    console.log("sendddddddd");
     const sendMailResult = await sendEmail(userEmail, resetToken);
 
-    if (sendMailResult) {
-      return res.json({
-        success: true,
-        message: "郵件已成功發送！",
-        messageId: sendMailResult.messageId
-      });
-    }
+    return res.json({
+      success: true,
+      message: "郵件已成功發送！_result",
+      messageId: sendMailResult
+    });
+    // if (sendMailResult) {
+    //   return res.json({
+    //     success: true,
+    //     message: "郵件已成功發送！",
+    //     messageId: sendMailResult.messageId
+    //   });
+    // }
   } catch (err) {
-    return handleError(res, `郵件發送失敗： ${err}`, 500);
+    return res.json({
+      message: "郵件發送fail！_result",
+      err
+    });
+    // return handleError(res, `郵件發送失敗： ${err}`, 500);
   }
 };
 
