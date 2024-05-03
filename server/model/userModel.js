@@ -47,9 +47,17 @@ const findUser = async (email, resetToken = false) => {
 const registerUser = async (data) => {
   try {
     const { user_id, email, password, username, avatar, created_at } = data;
-    const insertSql = "INSERT INTO users (user_id, email, password, username, avatar, created_at) VALUES (?, ?, ?, ?, ?, ?)";
+    const insertSql =
+      "INSERT INTO users (user_id, email, password, username, avatar, created_at) VALUES (?, ?, ?, ?, ?, ?)";
 
-    const result = await dbConnect.runSql(insertSql, [user_id, email, password, username, avatar, created_at]);
+    const result = await dbConnect.runSql(insertSql, [
+      user_id,
+      email,
+      password,
+      username,
+      avatar,
+      created_at
+    ]);
     console.log(result);
     if (result.affectedRows >= 1) {
       return backMeg(null, `會員資料新增 ${result.affectedRows}筆`);
@@ -67,10 +75,10 @@ const updateUser = async (userIdOrToken, data, isResetToken = false) => {
     let updateSql = "UPDATE users SET ";
     let params = [];
     // const { username, avatar, password } = data;
-    const keys = Object.keys(data);  // 獲取所有鍵的數組
+    const keys = Object.keys(data); // 獲取所有鍵的數組
     keys.forEach((key, index) => {
       // 只在非最後一個元素後添加逗號
-      updateSql += `${key} = ?${index < (keys.length - 1) ? ', ' : ' '}`;
+      updateSql += `${key} = ?${index < keys.length - 1 ? ", " : " "}`;
       params.push(data[key]);
     });
 
@@ -79,7 +87,6 @@ const updateUser = async (userIdOrToken, data, isResetToken = false) => {
       ? (updateSql += "reset_token = ?")
       : (updateSql += "user_id = ?");
     params.push(userIdOrToken);
-    console.log("uppppppppp", updateSql, params);
     const result = await dbConnect.runSql(updateSql, params);
 
     if (result.affectedRows >= 1) {

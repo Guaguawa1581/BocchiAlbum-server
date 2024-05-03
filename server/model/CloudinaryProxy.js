@@ -29,6 +29,21 @@ const getSignature = (folderName = "bocchi_imgs") => {
   };
 };
 
+const getDestroySignature = (id) => {
+  const timestamp = Math.round(new Date().getTime() / 1000);
+  const apiSecret = cloudinary.config().api_secret;
+  const signature = cloudinary.utils.api_sign_request(
+    {
+      public_id: id,
+      timestamp: timestamp
+    },
+    apiSecret
+  );
+  return {
+    signature,
+    timestamp
+  };
+};
 /** 上傳到圖片到cloudinary
  * @param file 檔案
  * @param folderName: 指定資料夾
@@ -66,7 +81,26 @@ const postImg = async (file, folderName) => {
     console.error(err);
   }
 };
+const destroyImg = async (publicID) => {
+  const url = `${process.env.CLOUDINARY_API}/${process.env.CLOUDINARY_ClOUD_NAME}/image/destroy`;
+  const apiKey = cloudinary.config().api_key;
+  const signData = await getDestroySignature(publicID);
+  let fd = new FormData();
+  fd.append("public_id", publicID);
+  fd.append("signature", signData.signature);
+  fd.append("api_key", apiKey);
+  fd.append("timestamp", signData.timestamp);
+  try {
+    const res = await axios.post(url, fd, {
+      header: { ...fd.getHeaders() }
+    });
+    return res.data;
+  } catch (err) {
+    console.error(err);
+  }
+};
 
 module.exports = {
-  postImg
+  postImg,
+  destroyImg
 };

@@ -8,13 +8,14 @@ const {
   cardDataUpdateValid
 } = require("../middleware/validation");
 const handleError = require("../middleware/handleError");
+const cloudinaryProxy = require("../model/CloudinaryProxy");
 
 const postData = async (req, res) => {
   try {
     // 檢查輸入參數的格式
     const { error: validError } = cardDataValid(req.body);
     if (validError) return handleError(res, validError.details[0].message, 400);
-    const { title, is_public, image_url } = req.body;
+    const { title, is_public, image_url, public_id } = req.body;
 
     const userId = req.user[0].user_id;
     const cardId = uuidv4();
@@ -25,6 +26,7 @@ const postData = async (req, res) => {
       title,
       is_public,
       image_url,
+      public_id,
       created_at: createdAt,
       updated_at: createdAt
     };
@@ -119,8 +121,8 @@ const updateCardData = async (req, res) => {
       updated_at
     };
 
-    // updataData(cardId ,data)
-    const result = await cardModel.updataData(cardId, cardData);
+    // updateData(cardId ,data)
+    const result = await cardModel.updateData(cardId, cardData);
     if (result.error) {
       return handleError(res, result.error, 400);
     } else {
@@ -135,12 +137,15 @@ const updateCardData = async (req, res) => {
 };
 const deleteCard = async (req, res) => {
   try {
+    const { card_id, public_id } = req.query;
     const tokenUserId = req.user[0].user_id;
-    const cardId = req.params.cardId;
-    const result = await cardModel.delData(cardId);
+    const result = await cardModel.delData(card_id);
     if (result.error) {
       return handleError(res, result.error, 400);
     } else {
+      // 刪掉cloudinary的圖片
+      const delResult = cloudinaryProxy.destroyImg(public_id);
+
       return res.json({
         success: true,
         message: result.message

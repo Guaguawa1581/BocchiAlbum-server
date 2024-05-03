@@ -30,7 +30,8 @@ const cardDataValid = (data) => {
   const schema = Joi.object({
     title: Joi.string().max(30).required(),
     is_public: Joi.number().valid(0, 1).required(),
-    image_url: Joi.string().uri().required()
+    image_url: Joi.string().uri().required(),
+    public_id: Joi.string().required()
   });
   return schema.validate(data);
 };
@@ -52,7 +53,8 @@ const cardDataUpdateValid = (data) => {
   const schema = Joi.object({
     title: Joi.string().max(30),
     is_public: Joi.number().valid(0, 1),
-    image_url: Joi.string().uri()
+    image_url: Joi.string().uri(),
+    public_id: Joi.string()
   });
   return schema.validate(data);
 };

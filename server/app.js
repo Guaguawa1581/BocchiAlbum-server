@@ -33,27 +33,22 @@ app.use("/api/testDb", async (req, res) => {
   try {
     const result = await localDb.selectSql();
     res.json(result);
-
   } catch (err) {
     res.json(err);
   }
-
 });
 app.use("/api/testDb2", async (req, res) => {
   try {
     const result = await localDb.selectSqlUser();
     res.json(result);
-
   } catch (err) {
     res.json(err);
   }
-
 });
 app.use("/api/testExecute", async (req, res) => {
   try {
     const result = await localDb.executeSql();
     res.json(result);
-
   } catch (err) {
     res.json(err);
   }
@@ -62,7 +57,6 @@ app.use("/api/testDeleteUser", async (req, res) => {
   try {
     const result = await localDb.deleteSql();
     res.json(result);
-
   } catch (err) {
     res.json(err);
   }
@@ -72,7 +66,6 @@ app.use("/api/testClose", async (req, res) => {
   try {
     const result = await localDb.closeDatabase();
     res.json(result);
-
   } catch (err) {
     res.json(err);
   }
@@ -85,7 +78,7 @@ app.use("/api/testClose", async (req, res) => {
 // DB啟動後開始監聽
 localDb.initDatabase((err) => {
   if (err) {
-    console.error('Failed to initialize database:', err);
+    console.error("Failed to initialize database:", err);
     return;
   }
   app.listen(8080, () => {

@@ -25,7 +25,7 @@ const registerFn = async (req, res) => {
     const { email, password, username, avatar } = req.body;
     // 檢查email是否已經存在
     const checkEmail = await userModel.findUser(email);
-    if (checkEmail.isExist) return handleError(res, "該Email已使用", 409);
+    if (checkEmail.isExist) return handleError(res, "該Email已使用", 200);
 
     // 密碼加密、避免圖片連結xss
     const salt = await bcrypt.genSalt(10);
@@ -158,7 +158,6 @@ const updateProfile = async (req, res) => {
       };
     }
 
-    console.log("ujuu", userId, userData);
     const updateResult = await userModel.updateUser(userId, userData);
     if (updateResult.error) {
       return handleError(res, updateResult.error);
@@ -201,27 +200,17 @@ const forgotPw = async (req, res) => {
     if (updateResult.error) {
       return handleError(res, updateResult.error);
     }
-    console.log("sendddddddd");
     const sendMailResult = await sendEmail(userEmail, resetToken);
 
-    return res.json({
-      success: true,
-      message: "郵件已成功發送！_result",
-      messageId: sendMailResult
-    });
-    // if (sendMailResult) {
-    //   return res.json({
-    //     success: true,
-    //     message: "郵件已成功發送！",
-    //     messageId: sendMailResult.messageId
-    //   });
-    // }
+    if (sendMailResult) {
+      return res.json({
+        success: true,
+        message: "郵件已成功發送！",
+        sendResult: sendMailResult
+      });
+    }
   } catch (err) {
-    return res.json({
-      message: "郵件發送fail！_result",
-      err
-    });
-    // return handleError(res, `郵件發送失敗： ${err}`, 500);
+    return handleError(res, `郵件發送失敗： ${err}`, 500);
   }
 };
 

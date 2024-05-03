@@ -6,9 +6,28 @@ const backMeg = (err, meg) => {
 
 const postNew = async (data) => {
   try {
-    const { card_id, user_id, title, is_public, image_url, created_at, updated_at } = data;
-    let insertSql = "INSERT INTO cards (card_id, user_id, title, is_public, image_url, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?) ";
-    const result = await dbConnect.runSql(insertSql, [card_id, user_id, title, is_public, image_url, created_at, updated_at]);
+    const {
+      card_id,
+      user_id,
+      title,
+      is_public,
+      image_url,
+      public_id,
+      created_at,
+      updated_at
+    } = data;
+    let insertSql =
+      "INSERT INTO cards (card_id, user_id, title, is_public, image_url, public_id,  created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?) ";
+    const result = await dbConnect.runSql(insertSql, [
+      card_id,
+      user_id,
+      title,
+      is_public,
+      image_url,
+      public_id,
+      created_at,
+      updated_at
+    ]);
     if (result.affectedRows >= 1) {
       return backMeg(null, `資料新增 ${result.affectedRows}筆`);
     } else {
@@ -59,13 +78,13 @@ const getData = async (isAll = false, userId, cardId, nowPage, perPage) => {
   }
 };
 
-const updataData = async (cardId, data) => {
+const updateData = async (cardId, data) => {
   try {
     let putSql = "UPDATE cards SET ";
     let params = [];
     const keys = Object.keys(data);
     keys.forEach((key, index) => {
-      putSql += `${key} = ?${index < (keys.length - 1) ? ', ' : ' '}`;
+      putSql += `${key} = ?${index < keys.length - 1 ? ", " : " "}`;
       params.push(data[key]);
     });
     putSql += "WHERE card_id = ?";
@@ -96,8 +115,8 @@ const delData = async (cardId) => {
   }
 };
 module.exports = {
-  postNew: postNew,
-  getData: getData,
-  updataData: updataData,
-  delData: delData
+  postNew,
+  getData,
+  updateData,
+  delData
 };

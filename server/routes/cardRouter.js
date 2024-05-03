@@ -17,6 +17,6 @@ router.post("/", userPassport, cardController.postData);
 router.get("/", cardController.getData);
 router.get("/album", userPassport, cardController.getDataAlbum);
 router.put("/card_id=:cardId", userPassport, cardController.updateCardData);
-router.delete("/card_id=:cardId", userPassport, cardController.deleteCard);
+router.delete("/", userPassport, cardController.deleteCard);
 
 module.exports = router;

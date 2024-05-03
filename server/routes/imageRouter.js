@@ -15,7 +15,6 @@ router.use((req, res, next) => {
 
 router.post("/", imageController.postImg);
 router.post("/profile", imageController.postProfileImg);
-
-
+router.delete("/public_id=:public_id", imageController.delImg);
 
 module.exports = router;
