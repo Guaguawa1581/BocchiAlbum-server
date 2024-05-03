@@ -11,7 +11,7 @@ const imageRouter = require("./routes/imageRouter");
 const cardRouter = require("./routes/cardRouter");
 
 const corsOptions = {
-  origin: [process.env.FRONTEND_WEB, "http://localhost:3000"]
+  origin: [process.env.FRONTEND_WEB]
 };
 // middleware
 app.use(cors(corsOptions)); //跨域設定
