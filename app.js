@@ -10,8 +10,11 @@ const userRouter = require("./routes/userRouter");
 const imageRouter = require("./routes/imageRouter");
 const cardRouter = require("./routes/cardRouter");
 
+const corsOptions = {
+  origin: [process.env.FRONTEND_WEB, "http://localhost:3000"]
+};
 // middleware
-app.use(cors()); //跨域設定
+app.use(cors(corsOptions)); //跨域設定
 app.use(express.json()); //解析POST請求的JSON主機
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
