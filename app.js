@@ -4,7 +4,7 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 dotenv.config({ path: ".env" });
 const localDb = require("./middleware/localDb");
-
+const defaultPort = process.env.PORT || 8080;
 // import route
 const userRouter = require("./routes/userRouter");
 const imageRouter = require("./routes/imageRouter");
@@ -81,7 +81,7 @@ localDb.initDatabase((err) => {
     console.error("Failed to initialize database:", err);
     return;
   }
-  app.listen(8080, () => {
-    console.log(`Server running on port 8080`);
+  app.listen(defaultPort, () => {
+    console.log(`Server running on port ${defaultPort}`);
   });
 });
