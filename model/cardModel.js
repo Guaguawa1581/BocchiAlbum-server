@@ -1,5 +1,5 @@
-// const dbConnect = require("../middleware/dbConnect");
-const dbConnect = require("../middleware/localDb");
+const dbConnect = require("../middleware/dbConnect");
+// const dbConnect = require("../middleware/localDb");
 const backMeg = (err, meg) => {
   return { error: err, message: meg };
 };
@@ -18,6 +18,8 @@ const postNew = async (data) => {
     } = data;
     let insertSql =
       "INSERT INTO cards (card_id, user_id, title, is_public, image_url, public_id,  created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?) ";
+
+    // local
     const result = await dbConnect.runSql(insertSql, [
       card_id,
       user_id,
@@ -62,7 +64,7 @@ const getData = async (isAll = false, userId, cardId, nowPage, perPage) => {
         getParams.push(perPage, (nowPage - 1) * perPage);
       }
     }
-
+    // local
     const result = await dbConnect.selectSql(getSql, getParams);
     if (result.length > 0) {
       return {

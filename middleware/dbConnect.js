@@ -13,5 +13,7 @@ const dbConnectPool = mysql.createPool({
 });
 
 const sqlQuery = promisify(dbConnectPool.query).bind(dbConnectPool);
+// 模擬sqlite的連線
+const dbConnect = { selectSql: sqlQuery, runSql: sqlQuery };
 
-module.exports = sqlQuery;
+module.exports = dbConnect;

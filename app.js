@@ -74,17 +74,17 @@ app.use("/api/testClose", async (req, res) => {
   }
 });
 // 開始監聽
-// app.listen(8080, () => {
-//   console.log(`Server running on port 8080`);
-// });
-
-// DB啟動後開始監聽
-localDb.initDatabase((err) => {
-  if (err) {
-    console.error("Failed to initialize database:", err);
-    return;
-  }
-  app.listen(defaultPort, () => {
-    console.log(`Server running on port ${defaultPort}`);
-  });
+app.listen(defaultPort, () => {
+  console.log(`Server running on port ${defaultPort}`);
 });
+
+// local DB啟動後開始監聽
+// localDb.initDatabase((err) => {
+//   if (err) {
+//     console.error("Failed to initialize database:", err);
+//     return;
+//   }
+//   app.listen(defaultPort, () => {
+//     console.log(`Server running on port ${defaultPort}`);
+//   });
+// });

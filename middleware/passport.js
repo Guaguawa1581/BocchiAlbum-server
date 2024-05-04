@@ -1,5 +1,5 @@
 const dbConnect = require("./dbConnect");
-const localDb = require("./localDb");
+// const dbConnect = require("./localDb");
 const passport = require("passport");
 const JwtStrategy = require("passport-jwt").Strategy;
 const ExtractJwt = require("passport-jwt").ExtractJwt;
@@ -17,11 +17,11 @@ passport.use(
     }
     // dbConnect(...)
     try {
-      const checkResult = await localDb.selectSql(
+      const checkResult = await dbConnect.selectSql(
         "SELECT * FROM users WHERE user_id = ? AND email = ?",
         [jwt_payload.userId, jwt_payload.email]
       );
-
+      console.log("cccccc", checkResult);
       if (checkResult.length > 0) {
         return done(null, checkResult);
       } else {

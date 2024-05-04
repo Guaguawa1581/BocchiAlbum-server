@@ -1,5 +1,5 @@
-// const dbConnect = require("../middleware/dbConnect");
-const dbConnect = require("../middleware/localDb");
+const dbConnect = require("../middleware/dbConnect");
+// const dbConnect = require("../middleware/localDb");
 
 const backMeg = (err, meg) => {
   return { error: err, message: meg };
@@ -16,6 +16,9 @@ const findUser = async (email, resetToken = false) => {
       checkSql += "reset_token = ? ";
       checkParams.push(resetToken);
     }
+    // rds
+    // const checkResult = await dbConnect(checkSql, checkParams);
+    // local
     const checkResult = await dbConnect.selectSql(checkSql, checkParams);
     if (checkResult.length > 0) {
       console.log("已搜尋到會員資料");
@@ -50,6 +53,7 @@ const registerUser = async (data) => {
     const insertSql =
       "INSERT INTO users (user_id, email, password, username, avatar, created_at) VALUES (?, ?, ?, ?, ?, ?)";
 
+    // local
     const result = await dbConnect.runSql(insertSql, [
       user_id,
       email,
